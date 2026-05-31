@@ -1,0 +1,46 @@
+name: Blog Frontend CI
+
+# Trigger this workflow on pushes and pull requests to the main branch
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+# Define the tasks (jobs) that GitHub Actions will run
+jobs:
+  lint-and-build:
+    # Run the job on a clean, standard Linux virtual machine (Ubuntu)
+    runs-on: ubuntu-latest
+
+    # Matrix strategy lets us run this job 3 times in parallel,
+    # testing it on Node.js versions 16, 18, and 20
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    # The sequential steps to execute inside our virtual machine
+    steps:
+      # Step 1: Check out (download) the repository code into the runner
+      - uses: actions/checkout@v3
+
+      # Step 2: Install and configure the specified Node.js version and cache npm dependencies
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      # Step 3: Install all frontend dependencies from package.json
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Run the code linter (ESLint) to check for syntax errors or styling violations
+      - name: Run linter on frontend
+        run: npm run lint
+
+      # Step 5: Compile the React app into optimized, production-ready static assets (dist folder)
+      - name: Build frontend
+        run: npm run build
