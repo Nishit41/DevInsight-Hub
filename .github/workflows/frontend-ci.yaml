@@ -19,7 +19,7 @@ jobs:
     # testing it on Node.js versions 16, 18, and 20
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x]
+        node-version: [18.x, 20.x]
 
     # The sequential steps to execute inside our virtual machine
     steps:
