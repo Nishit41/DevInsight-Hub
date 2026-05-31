@@ -2,12 +2,13 @@ import PropTypes from 'prop-types'
 
 export function PostFilter({ field, value, onChange }) {
     return (
-      <div>
-        <label htmlFor={`filter-${field}`}>{field}: </label>
+      <div className="form-group">
+        <label htmlFor={`filter-${field}`}>Filter by {field}</label>
         <input
           type='text'
           name={`filter-${field}`}
           id={`filter-${field}`}
+          placeholder="Type username..."
           value={value}
           onChange={(e)=>onChange(e.target.value)}
         />
