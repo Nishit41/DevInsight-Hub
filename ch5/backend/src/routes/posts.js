@@ -8,7 +8,6 @@ import {
     deletePost
 } from '../services/posts.js'
 
-
   export function postsRoutes(app) {
     app.get('/api/v1/posts', async (req, res) => {
         const { sortBy, sortOrder, author, tag } = req.query
