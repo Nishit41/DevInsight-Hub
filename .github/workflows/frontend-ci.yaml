@@ -4,10 +4,10 @@ name: Blog Frontend CI
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 # Define the tasks (jobs) that GitHub Actions will run
 jobs:
