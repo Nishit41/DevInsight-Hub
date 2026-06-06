@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types'
 export function PostSorting({ fields = [], orderValue,value, onOrderChange, onChange }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <div className="form-group">
+    <div style={{ display: 'flex', gap: '1rem', width: '100%' }}>
+      <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
         <label htmlFor='sortBy'>Sort By</label>
         <select name='sortBy' id='sortBy'
             value={value}
@@ -15,7 +15,7 @@ export function PostSorting({ fields = [], orderValue,value, onOrderChange, onCh
           ))}
         </select>
       </div>
-      <div className="form-group">
+      <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
         <label htmlFor='sortOrder'>Sort Order</label>
         <select
           name='sortOrder'

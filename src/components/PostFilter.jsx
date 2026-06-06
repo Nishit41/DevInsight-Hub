@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 
 export function PostFilter({ field, value, onChange }) {
     return (
-      <div className="form-group">
+      <div className="form-group" style={{ marginBottom: 0 }}>
         <label htmlFor={`filter-${field}`}>Filter by {field}</label>
         <input
           type='text'
