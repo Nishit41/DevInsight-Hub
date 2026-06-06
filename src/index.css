@@ -114,25 +114,50 @@ body {
   font-weight: 400;
 }
 
-/* 2-Column Dashboard Grid */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-  align-items: start;
+/* Vertical Stack Dashboard Layout */
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  width: 100%;
 }
 
-@media (min-width: 900px) {
-  .dashboard-grid {
-    grid-template-columns: 420px 1fr;
-  }
+.create-post-section {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-.sidebar {
+.feed-section {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
+
+/* Linear Search & Filter Bar - Sticky Glassmorphism */
+.search-filter-bar {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  padding: 1.25rem 1.5rem !important;
+  margin-bottom: 1.5rem;
+  
+  /* Sticky Glassmorphic Pins */
+  position: sticky;
+  top: 1rem;
+  z-index: 100;
+  background: rgba(13, 11, 20, 0.85) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(139, 92, 246, 0.2) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5) !important;
+}
+
 
 /* ==========================================================================
    GLASS CARDS & COMPONENTS
@@ -212,8 +237,15 @@ textarea:focus {
 
 textarea {
   resize: vertical;
-  min-height: 120px;
+  min-height: 280px;
 }
+
+#create-contents {
+  resize: none !important;
+  overflow-y: hidden !important;
+  min-height: 160px;
+}
+
 
 /* Primary Button Styling */
 .btn-primary {
@@ -400,3 +432,336 @@ textarea {
     box-shadow: 0 0 0 0 rgba(192, 132, 252, 0);
   }
 }
+
+/* ==========================================================================
+   DETAILS VIEW CLASSES (WOW FACTOR FOR READERS)
+   ========================================================================== */
+
+.details-container {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  animation: scaleUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  padding: 0.6rem 1.2rem;
+  border-radius: 100px;
+  font-family: var(--font-title);
+  font-weight: 600;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.back-btn:hover {
+  border-color: var(--glass-border-hover);
+  color: #fff;
+  transform: translateX(-4px);
+}
+
+.article-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 2rem;
+}
+
+.post-full-title {
+  font-family: var(--font-title);
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #fff 40%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.article-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.article-author-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatar-large {
+  width: 44px;
+  height: 44px;
+  background: var(--gradient-accent);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.2rem;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-transform: uppercase;
+  box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+}
+
+.author-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.author-name {
+  font-weight: 600;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.publish-date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.read-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #a7f3d0;
+  padding: 0.25rem 0.75rem;
+  border-radius: 100px;
+  text-transform: uppercase;
+}
+
+.article-body {
+  font-size: 1.15rem;
+  color: #e5e7eb;
+  line-height: 1.8;
+  letter-spacing: 0.01em;
+  white-space: pre-wrap;
+}
+
+/* Recruiter Interactive Zone */
+.recruiter-zone {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(139, 92, 246, 0.03));
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.clap-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.clap-btn {
+  background: var(--glass-bg);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: #fff;
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 100px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.clap-btn:hover {
+  background: rgba(139, 92, 246, 0.1);
+  border-color: var(--accent-purple);
+  transform: scale(1.05);
+}
+
+.clap-count {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+/* Comments Section Mock */
+.comments-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.comments-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.comment-card {
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+
+.commenter-name {
+  font-weight: 600;
+  color: #c084fc;
+}
+
+.comment-date {
+  color: var(--text-muted);
+}
+
+.comment-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Hover Pointer for Post Feed cards */
+.post-card {
+  cursor: pointer;
+}
+
+.post-card:hover .post-title {
+  color: #c084fc;
+  background: linear-gradient(135deg, #c084fc 30%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ==========================================================================
+   RICH TEXT & MARKDOWN STYLING
+   ========================================================================== */
+
+#edit-contents {
+  resize: none !important;
+  overflow-y: hidden !important;
+  min-height: 280px;
+}
+
+.rich-code-block {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0;
+  font-family: 'Fira Code', 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  line-height: 1.5;
+  color: #c084fc;
+}
+
+.rich-inline-code {
+  background: rgba(139, 92, 246, 0.15);
+  color: #c084fc;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Fira Code', 'Courier New', Courier, monospace;
+  font-size: 0.85em;
+  font-weight: 600;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.rich-link {
+  color: #60a5fa;
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px dashed rgba(96, 165, 250, 0.4);
+  transition: all 0.2s ease;
+}
+
+.rich-link:hover {
+  color: #c084fc;
+  border-bottom-color: #c084fc;
+}
+
+.rich-list {
+  margin: 1rem 0 1rem 1.5rem;
+  padding-left: 0.5rem;
+}
+
+.rich-list li {
+  margin-bottom: 0.4rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.rich-preview-container {
+  color: #e5e7eb;
+  line-height: 1.8;
+}
+
+/* ==========================================================================
+   WYSIWYG EDITOR STYLING
+   ========================================================================== */
+
+.wysiwyg-editor:empty::before {
+  content: attr(placeholder);
+  color: var(--text-muted);
+  font-style: italic;
+  cursor: text;
+}
+
+.wysiwyg-editor:focus {
+  outline: none;
+  border-color: var(--accent-purple) !important;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+  background: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Styled HTML content elements inside post reader */
+.article-body ul, .wysiwyg-editor ul {
+  margin: 1rem 0 1rem 1.5rem;
+  padding-left: 0.5rem;
+  list-style-type: disc;
+}
+
+.article-body ol, .wysiwyg-editor ol {
+  margin: 1rem 0 1rem 1.5rem;
+  padding-left: 0.5rem;
+  list-style-type: decimal;
+}
+
+.article-body li, .wysiwyg-editor li {
+  margin-bottom: 0.4rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.article-body a, .wysiwyg-editor a {
+  color: #60a5fa;
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px dashed rgba(96, 165, 250, 0.4);
+  transition: all 0.2s ease;
+}
+
+.article-body a:hover, .wysiwyg-editor a:hover {
+  color: #c084fc;
+  border-bottom-color: #c084fc;
+}
+
+
+

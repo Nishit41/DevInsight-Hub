@@ -2,7 +2,7 @@ import { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { Post } from './Post.jsx'
 
-export const PostList=({ posts = [] })=>{
+export const PostList=({ posts = [], onSelectPost })=>{
     if (!posts || posts.length === 0) {
       return (
         <div className="glass-card empty-state">
@@ -16,7 +16,7 @@ export const PostList=({ posts = [] })=>{
     return (
         <div className="post-feed">
           {posts.map((post) => (
-            <Post {...post} key={post._id} />
+            <Post {...post} key={post._id} onSelect={onSelectPost} />
           ))}
         </div>
       )
