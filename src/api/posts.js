@@ -13,3 +13,17 @@ export const createPost = async (post) => {
     })
     return await response.json()
 }
+
+export const getPostById = async (id) => {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/posts/${id}`)
+    return await response.json()
+}
+
+export const updatePost = async ({ id, ...post }) => {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/posts/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(post),
+    })
+    return await response.json()
+}
