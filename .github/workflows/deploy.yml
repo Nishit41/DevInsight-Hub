@@ -3,7 +3,7 @@ name: Deploy DevInsight Hub
 on:
   push:
     branches:
-      - main
+      - master
 
 env:
   PROJECT_ID: project-f9557618-07f5-4e11-af8
