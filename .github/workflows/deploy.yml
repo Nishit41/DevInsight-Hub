@@ -1,0 +1,119 @@
+name: Deploy DevInsight Hub
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  PROJECT_ID: project-f9557618-07f5-4e11-af8
+  REGION: us-central1
+
+jobs:
+  # ─── CI: Frontend ───────────────────────────────
+  frontend-ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build frontend
+        run: npm run build
+
+  # ─── CI: Backend ────────────────────────────────
+  backend-ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run backend tests
+        run: npm test
+
+  # ─── CD: Deploy ─────────────────────────────────
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [frontend-ci, backend-ci]  # Only deploy if CI passes ✅
+    permissions:
+      contents: read
+      id-token: write  # Required for Workload Identity
+
+    environment:
+      name: production
+      url: ${{ steps.deploy-frontend.outputs.url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Auth via Workload Identity (No JSON key!) 🔐
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+
+      # Setup gcloud
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      # Configure Docker for Artifact Registry
+      - name: Configure Docker
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      # Build & Push Backend
+      - name: Build and Push Backend
+        run: |
+          docker build -t us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/devinsight-hub/backend:${{ github.sha }} ./backend
+          docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/devinsight-hub/backend:${{ github.sha }}
+
+      # Deploy Backend
+      - id: deploy-backend
+        name: Deploy Backend
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: devinsight-hub-backend
+          image: us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/devinsight-hub/backend:${{ github.sha }}
+          region: ${{ env.REGION }}
+
+      # Build & Push Frontend (passing backend URL)
+      - name: Build and Push Frontend
+        run: |
+          docker build \
+            --build-arg REACT_APP_BACKEND_URL=${{ steps.deploy-backend.outputs.url }}/api \
+            -t us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/devinsight-hub/frontend:${{ github.sha }} \
+            ./frontend
+          docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/devinsight-hub/frontend:${{ github.sha }}
+
+      # Deploy Frontend
+      - id: deploy-frontend
+        name: Deploy Frontend
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: devinsight-hub-frontend
+          image: us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/devinsight-hub/frontend:${{ github.sha }}
+          region: ${{ env.REGION }}

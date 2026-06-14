@@ -1,4 +1,4 @@
-name: DevInsight Hub Backend CI/CD
+name: Blog Backend CI/CD
 
 on:
   push:
@@ -12,6 +12,7 @@ permissions:
   contents: read
   id-token: write   # Required for Workload Identity
 
+# Define the tasks (jobs) that GitHub Actions will run
 jobs:
   # ─── CI: Lint & Test ────────────────────────────
   lint-and-test:
