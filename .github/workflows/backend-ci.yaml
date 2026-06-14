@@ -51,7 +51,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Authenticate to GCP via Workload Identity 🔐
       - name: Authenticate to Google Cloud
         id: auth
         uses: google-github-actions/auth@v2
@@ -65,14 +64,16 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # ✅ Changed to asia-south1
       - name: Configure Docker for GCP
-        run: gcloud auth configure-docker us-central1-docker.pkg.dev
+        run: gcloud auth configure-docker asia-south1-docker.pkg.dev
 
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: us-central1-docker.pkg.dev/project-f9557618-07f5-4e11-af8/devinsight-hub/backend
+          # ✅ Changed to asia-south1
+          images: asia-south1-docker.pkg.dev/project-f9557618-07f5-4e11-af8/devinsight-hub/backend
           tags: |
             type=raw,value=latest
             type=sha,format=short
@@ -85,3 +86,23 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      # # ✅ Deploy to Cloud Run in asia-south1
+      # - id: deploy-backend
+      #   name: Deploy Backend to Cloud Run
+      #   uses: google-github-actions/deploy-cloudrun@v2
+      #   with:
+      #     service: devinsight-hub-backend
+      #     image: asia-south1-docker.pkg.dev/project-f9557618-07f5-4e11-af8/devinsight-hub/backend:latest
+      #     region: asia-south1
+
+      # # ✅ Set IAM policy for public access
+      # - name: Set IAM policy for public access
+      #   run: |
+      #     gcloud run services add-iam-policy-binding devinsight-hub-backend \
+      #       --region=asia-south1 \
+      #       --member="allUsers" \
+      #       --role="roles/run.invoker"
+
+      # - name: Print Backend URL
+      #   run: echo "Backend URL: ${{ steps.deploy-backend.outputs.url }}"
