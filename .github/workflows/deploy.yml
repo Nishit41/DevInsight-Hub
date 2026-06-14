@@ -86,7 +86,7 @@ jobs:
       # ✅ Changed registry to asia-south1
       - name: Build and Push Backend
         run: |
-          docker build -t asia-south1-docker.pkg.dev/${{ env.PROJECT_ID }}/devinsight-hub/backend:${{ github.sha }} ./backend
+          docker build -t asia-south1-docker.pkg.dev/${{ env.PROJECT_ID }}/devinsight-hub/backend:${{ github.sha }} ch5/backend
           docker push asia-south1-docker.pkg.dev/${{ env.PROJECT_ID }}/devinsight-hub/backend:${{ github.sha }}
 
       - id: deploy-backend
