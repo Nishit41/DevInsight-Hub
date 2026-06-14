@@ -10,7 +10,7 @@ export const userRoutes = (app)=>{
                 username: user.username
             })
         }
-        catch(err){
+        catch {
             return res.status(400).json({
                 error: "failed to create the user, does the username already exists?"
             })
@@ -36,7 +36,7 @@ export const userRoutes = (app)=>{
                 username: user.username
             })
         }
-        catch(err){
+        catch {
             return res.status(400).json({
                 error: "login failed"
             })
