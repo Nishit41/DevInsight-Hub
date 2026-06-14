@@ -1,6 +1,5 @@
-name: Blog Backend CI
+name: DevInsight Hub Backend CI/CD
 
-# Trigger this workflow on pushes and pull requests to the master branch
 on:
   push:
     branches:
@@ -9,40 +8,91 @@ on:
     branches:
       - master
 
-# Define the tasks (jobs) that GitHub Actions will run
-jobs:
-  lint-and-test:
-    # Run the job on a clean, standard Linux virtual machine (Ubuntu)
-    runs-on: ubuntu-latest
+permissions:
+  contents: read
+  id-token: write   # Required for Workload Identity
 
+jobs:
+  # ─── CI: Lint & Test ────────────────────────────
+  lint-and-test:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [20.x, 22.x]   # updated versions
 
-    # The sequential steps to execute inside our virtual machine
     steps:
-      # Step 1: Check out (download) the repository code into the runner
-      - uses: actions/checkout@v3
+      # Step 1: Checkout code
+      - uses: actions/checkout@v4     # v3 → v4
 
-      # Step 2: Install and configure the specified Node.js version and cache npm dependencies
+      # Step 2: Setup Node.js
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4   # v3 → v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          cache-dependency-path: 'ch5/backend/package-lock.json'
+          cache-dependency-path: 'backend/package-lock.json'  # ch5/backend → backend
 
-      # Step 3: Install all backend dependencies from package.json
+      # Step 3: Install dependencies
       - name: Install dependencies
-        working-directory: ch5/backend
+        working-directory: backend    # ch5/backend → backend
         run: npm install
 
-      # Step 4: Run the code linter (ESLint) to check for syntax errors or styling violations
+      # Step 4: Run linter
       - name: Run linter on backend
-        working-directory: ch5/backend
+        working-directory: backend
         run: npm run lint
 
-      # Step 5: Run tests using Jest
+      # Step 5: Run tests
       - name: Run tests on backend
-        working-directory: ch5/backend
-        run: npm run test
+        working-directory: backend
+        run: npm test --passWithNoTests  # won't fail if no tests yet
+
+  # ─── CD: Build & Push to Artifact Registry ──────
+  build-and-push-docker:
+    needs: lint-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      # Step 1: Checkout code
+      - uses: actions/checkout@v4     # v3 → v4
+
+      # Step 2: Authenticate to GCP (No JSON key!) 🔐
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+
+      # Step 3: Setup gcloud
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      # Step 4: Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3   # v2 → v3
+
+      # Step 5: Configure Docker for Artifact Registry
+      - name: Configure Docker for GCP
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      # Step 6: Extract metadata
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5       # v4 → v5
+        with:
+          images: us-central1-docker.pkg.dev/project-f9557618-07f5-4e11-af8/devinsight-hub/backend
+          tags: |
+            type=raw,value=latest
+            type=sha,format=short
+
+      # Step 7: Build and Push to Artifact Registry
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5     # v4 → v5
+        with:
+          context: ./backend                  # ch5/backend → backend
+          file: ./backend/Dockerfile          # ch5/backend → backend
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
